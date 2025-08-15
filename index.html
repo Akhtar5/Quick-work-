@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Work - Mechanic Finder</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+
+<header>
+    <h1>Quick Work</h1>
+    <nav>
+        <button onclick="showSection('login')">Login</button>
+        <button onclick="showSection('signup')">Signup</button>
+        <button onclick="showSection('mechanics')">Find Mechanic</button>
+    </nav>
+</header>
+
+<!-- Signup -->
+<section id="signup" class="hidden">
+    <h2>Signup</h2>
+    <input type="text" id="signupName" placeholder="Name">
+    <input type="email" id="signupEmail" placeholder="Email">
+    <input type="password" id="signupPassword" placeholder="Password">
+    <button onclick="signup()">Register</button>
+</section>
+
+<!-- Login -->
+<section id="login" class="hidden">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="login()">Login</button>
+</section>
+
+<!-- Mechanics -->
+<section id="mechanics" class="hidden">
+    <h2>Nearby Mechanics</h2>
+    <div id="map"></div>
+    <ul id="mechanicList"></ul>
+</section>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
