@@ -1,48 +1,411 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick Work - Mechanic Finder</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quick-Work | Mechanic Finder (Supabase)</title>
+<style>
+  :root{--bg:#06110d;--panel:#0c1b16;--muted:#0e221b;--line:#123428;--brand:#28f7a2;--text:#e7fff6;--sub:#a9dbc6;--danger:#ff4d6d}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial}
+  header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(90deg,var(--panel),#08130f);border-bottom:1px solid var(--line)}
+  .brand{font-weight:800} .ghost{background:transparent;border:1px solid var(--line);color:var(--text);padding:8px 12px;border-radius:10px}
+  main{max-width:1100px;margin:0 auto;padding:16px} .grid{display:grid;gap:14px} .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:880px){.g2{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg,var(--panel),var(--muted));border:1px solid var(--line);border-radius:16px;padding:14px}
+  h2{margin:.2rem 0 1rem 0}
+  input,select,textarea{width:100%;background:#04140f;border:1px solid var(--line);color:var(--text);padding:10px;border-radius:12px;margin:6px 0}
+  button{border:1px solid var(--line);background:#0a1a14;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+  .primary{background:var(--brand);color:#05261a;border-color:#1bd68a;font-weight:700}
+  .secondary{background:#0f2b22} .danger{background:var(--danger);border-color:#d53a52}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .list{display:grid;gap:10px} .item{border:1px solid var(--line);border-radius:14px;padding:10px;background:#081913}
+  .badge{display:inline-block;padding:3px 8px;border:1px solid var(--line);border-radius:999px;margin-left:8px;color:var(--brand)}
+  .rating{color:var(--brand);font-weight:700} .chat{border:1px solid var(--line);border-radius:14px;padding:10px;height:220px;overflow:auto;background:#05120e}
+  .msg{margin:6px 0;padding:8px 10px;border-radius:10px;background:#0c2019} .msg.me{background:#143c2e;text-align:right}
+  small{color:var(--sub)}
+</style>
 </head>
 <body>
-
 <header>
-    <h1>Quick Work</h1>
-    <nav>
-        <button onclick="showSection('login')">Login</button>
-        <button onclick="showSection('signup')">Signup</button>
-        <button onclick="showSection('mechanics')">Find Mechanic</button>
-    </nav>
+  <div class="brand">⚡ Quick-Work</div>
+  <div class="row">
+    <button id="btnHome" class="ghost">Home</button>
+    <button id="btnLogout" class="ghost" style="display:none">Logout</button>
+  </div>
 </header>
 
-<!-- Signup -->
-<section id="signup" class="hidden">
-    <h2>Signup</h2>
-    <input type="text" id="signupName" placeholder="Name">
-    <input type="email" id="signupEmail" placeholder="Email">
-    <input type="password" id="signupPassword" placeholder="Password">
-    <button onclick="signup()">Register</button>
-</section>
+<main id="screen-auth">
+  <div class="grid g2">
+    <div class="card">
+      <h2>Create account</h2>
+      <input id="rName" placeholder="Full name">
+      <input id="rPhone" placeholder="Phone (for call/WhatsApp)">
+      <select id="rRole"><option value="customer">Customer</option><option value="mechanic">Mechanic</option></select>
+      <input id="rEmail" type="email" placeholder="Email">
+      <input id="rPass" type="password" placeholder="Password">
+      <input id="rSkill" placeholder="Mechanic Department/Skill (if mechanic)">
+      <button id="btnRegister" class="primary">Register</button>
+    </div>
+    <div class="card">
+      <h2>Login</h2>
+      <input id="lEmail" type="email" placeholder="Email">
+      <input id="lPass" type="password" placeholder="Password">
+      <button id="btnLogin" class="primary">Login</button>
+      <small id="authMsg"></small>
+    </div>
+  </div>
+</main>
 
-<!-- Login -->
-<section id="login" class="hidden">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
-</section>
+<!-- CUSTOMER PANEL -->
+<main id="screen-cust" style="display:none">
+  <div class="grid g2">
+    <div class="card">
+      <h2>Find Mechanics</h2>
+      <div class="row">
+        <input id="filterSkill" placeholder="Filter by department/skill…">
+        <button id="btnRefresh" class="secondary">Refresh</button>
+        <button id="btnShareLocC" class="ghost">Share my live location</button>
+      </div>
+      <small id="custLocStatus"></small>
+      <div id="mechList" class="list"></div>
+    </div>
+    <div class="card">
+      <h2>My Bookings (Realtime)</h2>
+      <div id="myBookings" class="list"></div>
+    </div>
+  </div>
 
-<!-- Mechanics -->
-<section id="mechanics" class="hidden">
-    <h2>Nearby Mechanics</h2>
-    <div id="map"></div>
-    <ul id="mechanicList"></ul>
-</section>
+  <div class="card">
+    <h2>Chat</h2>
+    <div class="row">
+      <input id="chatBookingId" placeholder="Booking ID">
+      <button id="btnOpenChat">Open</button>
+    </div>
+    <div id="chatBox" class="chat"></div>
+    <div class="row">
+      <input id="chatMsg" placeholder="Type message…">
+      <button id="btnSend" class="primary">Send</button>
+    </div>
+  </div>
+</main>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="script.js"></script>
+<!-- MECHANIC PANEL -->
+<main id="screen-mech" style="display:none">
+  <div class="grid g2">
+    <div class="card">
+      <h2>My Status</h2>
+      <div id="meProfile"></div>
+      <div class="row">
+        <button id="btnOnline" class="primary">Go Online</button>
+        <button id="btnOffline" class="secondary">Go Offline</button>
+        <button id="btnShareLocM" class="ghost">Share my live location</button>
+      </div>
+      <small id="mechLocStatus"></small>
+    </div>
+    <div class="card">
+      <h2>Requests (Realtime)</h2>
+      <div id="reqList" class="list"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Chat</h2>
+    <div class="row">
+      <input id="chatBookingIdM" placeholder="Booking ID">
+      <button id="btnOpenChatM">Open</button>
+    </div>
+    <div id="chatBoxM" class="chat"></div>
+    <div class="row">
+      <input id="chatMsgM" placeholder="Type message…">
+      <button id="btnSendM" class="primary">Send</button>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ================== SUPABASE INIT ================== */
+const SUPABASE_URL = "https://fzkjrtudqirpefxsvilc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6a2pydHVkcWlycGVmeHN2aWxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMjEyNjcsImV4cCI6MjA3MDg5NzI2N30.aSZaNoz5BXESVeYnRAU_cNuOmaN7mOi0nd5-FEN-fZk";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ================== UTIL ================== */
+const $ = id => document.getElementById(id);
+let me = null;                 // auth user
+let meRow = null;              // users row
+let chatSub = null, bookSub = null;
+let geoWatchId = null;
+
+function show(id){ ["screen-auth","screen-cust","screen-mech"].forEach(s=>$(s).style.display="none"); $(id).style.display="block"; }
+function toast(t){ $('authMsg').textContent=t; setTimeout(()=>{$('authMsg').textContent=''},3000); }
+
+/* ================== AUTH ================== */
+$('btnRegister').onclick = async ()=>{
+  const name=$('rName').value.trim(), email=$('rEmail').value.trim(), pass=$('rPass').value, role=$('rRole').value, phone=$('rPhone').value.trim(), skill=$('rSkill').value.trim();
+  if(!name||!email||!pass) return toast('Fill name/email/password');
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  if(error) return toast(error.message);
+  const uid = data.user.id;
+  await sb.from('users').insert([{ id:uid, name, role, phone }]);
+  if(role==='mechanic'){ await sb.from('mechanics').insert([{ user_id:uid, skill, status:'offline' }]); }
+  toast('Registered! Please login.');
+};
+
+$('btnLogin').onclick = async ()=>{
+  const email=$('lEmail').value.trim(), pass=$('lPass').value;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if(error) return toast(error.message);
+  me = data.user; $('btnLogout').style.display='inline-block'; loadMe();
+};
+$('btnLogout').onclick = async ()=>{ await sb.auth.signOut(); me=null; meRow=null; $('btnLogout').style.display='none'; show('screen-auth'); };
+
+$('btnHome').onclick = ()=>{ if(!me||!meRow) return show('screen-auth'); show(meRow.role==='mechanic'?'screen-mech':'screen-cust'); };
+
+/* ================== LOAD USER + SUBS ================== */
+async function loadMe(){
+  const { data:userRow } = await sb.from('users').select('*').eq('id', me.id).single();
+  meRow = userRow;
+  if(bookSub){ sb.removeChannel(bookSub); bookSub=null; }
+  if(meRow.role==='customer'){ initCustomer(); show('screen-cust'); }
+  else { initMechanic(); show('screen-mech'); }
+}
+
+/* ================== CUSTOMER ================== */
+async function initCustomer(){
+  await loadMechanics();
+  subscribeBookingsCustomer();
+}
+
+$('btnRefresh').onclick = loadMechanics;
+$('filterSkill').oninput = loadMechanics;
+
+async function loadMechanics(){
+  let filter = $('filterSkill').value.trim().toLowerCase();
+  const { data: rows } = await sb.from('mechanics').select('user_id, skill, status, lat, lng, users(name, phone)');
+  const list = $('mechList'); list.innerHTML='';
+  (rows||[]).filter(m=>!filter || (m.skill||'').toLowerCase().includes(filter)).forEach(m=>{
+    const div=document.createElement('div'); div.className='item';
+    const ratingView = `<span class="badge">Rating: <span class="rating" data-mech="${m.user_id}">—</span></span>`;
+    div.innerHTML = `
+      <div><b>${m.users?.name||'Mechanic'}</b> <span class="badge">${m.skill||'General'}</span> ${ratingView}</div>
+      <div>Status: <b>${m.status}</b> ${m.lat?`· 📍 ${m.lat.toFixed(4)}, ${m.lng.toFixed(4)}`:''}</div>
+      <div class="row" style="margin-top:6px">
+        <input id="p_${m.user_id}" placeholder="Describe problem...">
+        <button onclick="createBooking('${m.user_id}')">Book</button>
+        ${m.users?.phone?`<a class="ghost" href="tel:${m.users.phone}">Call</a>`:''}
+        ${m.users?.phone?`<a class="ghost" href="https://wa.me/${m.users.phone.replace(/\\D/g,'')}" target="_blank">WhatsApp</a>`:''}
+        ${m.lat?`<a class="ghost" target="_blank" href="https://www.google.com/maps?q=${m.lat},${m.lng}">Location</a>`:''}
+      </div>`;
+    list.appendChild(div);
+    loadAvgRating(m.user_id); // async
+  });
+}
+
+// avg rating from bookings
+async function loadAvgRating(mechId){
+  const { data, error } = await sb.from('bookings').select('rating').eq('mechanic_id', mechId).not('rating','is',null);
+  const el = document.querySelector(`.rating[data-mech="${mechId}"]`); if(!el) return;
+  if(error || !data || !data.length){ el.textContent='—'; return; }
+  const avg = (data.reduce((a,b)=>a+(b.rating||0),0)/data.length).toFixed(1);
+  el.textContent = `★ ${avg}`;
+}
+
+async function createBooking(mechId){
+  if(!me) return toast('Login required');
+  const problem = ($('p_'+mechId)?.value||'').trim();
+  const { error } = await sb.from('bookings').insert([{ customer_id: me.id, mechanic_id: mechId, problem, status:'pending' }]);
+  if(error) return toast(error.message);
+  toast('Booking sent!');
+}
+
+function subscribeBookingsCustomer(){
+  // Realtime list of my bookings
+  renderMyBookings(); // initial
+  bookSub = sb.channel('cust_bookings')
+    .on('postgres_changes', { event:'*', schema:'public', table:'bookings', filter:`customer_id=eq.${me.id}` }, payload => {
+      renderMyBookings();
+    }).subscribe();
+}
+
+async function renderMyBookings(){
+  const { data: rows } = await sb.from('bookings').select('id, mechanic_id, status, problem, rating, created_at, users!bookings_mechanic_id_fkey(name)').eq('customer_id', me.id).order('created_at', {ascending:false});
+  const wrap = $('myBookings'); wrap.innerHTML='';
+  (rows||[]).forEach(b=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML = `
+      <div><b>${b.users?.name||'Mechanic'}</b> · <small>${new Date(b.created_at).toLocaleString()}</small></div>
+      <div>Status: <b>${b.status}</b> · ${b.problem?`Issue: ${b.problem}`:''}</div>
+      <div class="row" style="margin-top:6px">
+        <button onclick="openChat('${b.id}', false)">Open Chat</button>
+        ${b.status==='completed' && !b.rating ? `
+          <select id="rate_${b.id}">
+            <option value="">Rate (1–5)</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+          </select>
+          <button onclick="submitRating('${b.id}')">Submit Rating</button>` : (b.rating ? `<span class="badge">Your rating: ${b.rating}</span>`:'')
+        }
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+async function submitRating(bookingId){
+  const sel = $('rate_'+bookingId); if(!sel||!sel.value) return toast('Choose rating');
+  const rating = parseInt(sel.value,10);
+  await sb.from('bookings').update({ rating }).eq('id', bookingId);
+  toast('Thanks for rating!');
+  renderMyBookings();
+}
+
+/* ===== Customer Live Location share (HTML5, no API key) ===== */
+$('btnShareLocC').onclick = ()=>{
+  if(geoWatchId){ navigator.geolocation.clearWatch(geoWatchId); geoWatchId=null; $('custLocStatus').textContent='Sharing stopped.'; return; }
+  if(!navigator.geolocation) return toast('Geolocation not supported');
+  $('custLocStatus').textContent='Sharing…';
+  geoWatchId = navigator.geolocation.watchPosition(async pos=>{
+    // customer location optional: store in users table (could be used later)
+    await sb.from('users').update({ /* nothing enforced here, optional */ })
+      .eq('id', me.id);
+    $('custLocStatus').textContent=`Live @ ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+  }, err=>toast(err.message), { enableHighAccuracy:true });
+};
+
+/* ================== MECHANIC ================== */
+async function initMechanic(){
+  renderMechProfile();
+  subscribeBookingsMechanic();
+}
+
+async function renderMechProfile(){
+  const { data:m } = await sb.from('mechanics').select('*').eq('user_id', me.id).maybeSingle();
+  $('meProfile').innerHTML = `
+    <div><b>${meRow.name}</b> <span class="badge">${m?.skill||'General'}</span></div>
+    <div>Phone: ${meRow.phone||'-'}</div>
+    <div>Status: <b>${m?.status||'offline'}</b> ${m?.lat?`· 📍 ${m.lat?.toFixed(4)}, ${m.lng?.toFixed(4)}`:''}</div>
+  `;
+}
+$('btnOnline').onclick = async ()=>{
+  // take one-time precise location on going online
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      await sb.from('mechanics').upsert({ user_id: me.id, status:'online', lat:pos.coords.latitude, lng:pos.coords.longitude }, { onConflict: 'user_id' });
+      renderMechProfile();
+      toast('You are Online');
+    });
+  } else {
+    await sb.from('mechanics').upsert({ user_id: me.id, status:'online' }, { onConflict: 'user_id' });
+    renderMechProfile();
+    toast('You are Online');
+  }
+};
+$('btnOffline').onclick = async ()=>{
+  await sb.from('mechanics').update({ status:'offline' }).eq('user_id', me.id);
+  renderMechProfile(); toast('You are Offline');
+};
+
+// live location toggle
+$('btnShareLocM').onclick = ()=>{
+  if(geoWatchId){ navigator.geolocation.clearWatch(geoWatchId); geoWatchId=null; $('mechLocStatus').textContent='Sharing stopped.'; return; }
+  if(!navigator.geolocation) return toast('Geolocation not supported');
+  $('mechLocStatus').textContent='Sharing…';
+  geoWatchId = navigator.geolocation.watchPosition(async pos=>{
+    await sb.from('mechanics').update({ lat:pos.coords.latitude, lng:pos.coords.longitude }).eq('user_id', me.id);
+    $('mechLocStatus').textContent=`Live @ ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+  }, err=>toast(err.message), { enableHighAccuracy:true });
+};
+
+function subscribeBookingsMechanic(){
+  renderRequests(); // initial
+  bookSub = sb.channel('mech_bookings')
+    .on('postgres_changes', { event:'*', schema:'public', table:'bookings', filter:`mechanic_id=eq.${me.id}` }, payload=>{
+      renderRequests();
+    }).subscribe();
+}
+
+async function renderRequests(){
+  const { data: rows } = await sb.from('bookings').select('id, customer_id, status, problem, created_at, users!bookings_customer_id_fkey(name,phone)').eq('mechanic_id', me.id).order('created_at',{ascending:false});
+  const wrap = $('reqList'); wrap.innerHTML='';
+  (rows||[]).forEach(b=>{
+    const div=document.createElement('div'); div.className='item';
+    div.innerHTML = `
+      <div><b>${b.users?.name||'Customer'}</b> · <small>${new Date(b.created_at).toLocaleString()}</small></div>
+      <div>Status: <b>${b.status}</b> · ${b.problem?`Issue: ${b.problem}`:''}</div>
+      <div class="row" style="margin-top:6px">
+        ${b.status==='pending'
+          ? `<button onclick="updateBooking('${b.id}','accepted')" class="primary">Accept</button>
+             <button onclick="updateBooking('${b.id}','rejected')" class="secondary">Reject</button>`
+          : ''
+        }
+        ${b.status==='accepted'
+          ? `<button onclick="updateBooking('${b.id}','completed')" class="ghost">Mark Completed</button>` : ''
+        }
+        <button onclick="openChat('${b.id}', true)">Open Chat</button>
+        ${b.users?.phone?`<a class="ghost" href="tel:${b.users.phone}">Call</a>`:''}
+      </div>`;
+    wrap.appendChild(div);
+  });
+}
+
+async function updateBooking(id, status){
+  await sb.from('bookings').update({ status }).eq('id', id);
+  toast('Booking '+status);
+}
+
+/* ================== CHAT (Realtime) ================== */
+let currentChatId = null;
+
+function openChat(bookingId, mech){
+  currentChatId = bookingId;
+  if(chatSub){ sb.removeChannel(chatSub); chatSub=null; }
+  const box = mech?$('chatBoxM'):$('chatBox');
+  box.innerHTML='';
+  // initial load
+  loadChatMessages(bookingId, box);
+  // subscribe realtime
+  chatSub = sb.channel('chat_'+bookingId)
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages', filter:`booking_id=eq.${bookingId}` }, payload=>{
+      appendMsg(box, payload.new);
+    }).subscribe();
+  // wire send buttons to this chat
+  if(mech){
+    $('chatBookingIdM').value = bookingId;
+  } else {
+    $('chatBookingId').value = bookingId;
+  }
+}
+$('btnOpenChat').onclick = ()=> openChat($('chatBookingId').value, false);
+$('btnOpenChatM').onclick = ()=> openChat($('chatBookingIdM').value, true);
+
+async function loadChatMessages(bookingId, box){
+  const { data } = await sb.from('chat_messages').select('*').eq('booking_id', bookingId).order('created_at', {ascending:true});
+  (data||[]).forEach(row=>appendMsg(box,row));
+}
+function appendMsg(box,row){
+  const div=document.createElement('div');
+  div.className='msg'+(row.sender_id===me?.id?' me':'');
+  div.textContent=row.message;
+  box.appendChild(div); box.scrollTop = box.scrollHeight;
+}
+
+$('btnSend').onclick = async ()=>{
+  if(!currentChatId) currentChatId = $('chatBookingId').value;
+  const txt = $('chatMsg').value.trim(); if(!txt) return;
+  await sb.from('chat_messages').insert([{ booking_id: currentChatId, sender_id: me.id, message: txt }]);
+  $('chatMsg').value='';
+};
+$('btnSendM').onclick = async ()=>{
+  if(!currentChatId) currentChatId = $('chatBookingIdM').value;
+  const txt = $('chatMsgM').value.trim(); if(!txt) return;
+  await sb.from('chat_messages').insert([{ booking_id: currentChatId, sender_id: me.id, message: txt }]);
+  $('chatMsgM').value='';
+};
+
+/* ================== SESSION RESTORE ================== */
+(async ()=>{
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){ me = session.user; $('btnLogout').style.display='inline-block'; await loadMe(); }
+})();
+</script>
 </body>
 </html>
