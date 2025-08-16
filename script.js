@@ -1,44 +1,69 @@
-function showSection(id) {
-    document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
+
+// Supabase connection
+const SUPABASE_URL = "https://fzkjrtudqirpefxsvilc.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6a2pydHVkcWlycGVmeHN2aWxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMjEyNjcsImV4cCI6MjA3MDg5NzI2N30.aSZaNoz5BXESVeYnRAU_cNuOmaN7mOi0nd5-FEN-fZk";
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Switch panels
+function showPanel(panelId) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(panelId).classList.add("active");
 }
 
-function signup() {
-    const name = document.getElementById("signupName").value;
-    const email = document.getElementById("signupEmail").value;
-    const password = document.getElementById("signupPassword").value;
-    localStorage.setItem("user", JSON.stringify({ name, email, password }));
-    alert("Signup successful! Please login.");
-    showSection("login");
+// Register mechanic
+async function registerMechanic() {
+  let name = document.getElementById("mName").value;
+  let dept = document.getElementById("mDept").value;
+  let phone = document.getElementById("mPhone").value;
+
+  let { data, error } = await db.from("mechanics").insert([{ name, dept, phone, status: "offline" }]);
+  if (error) {
+    alert("Error: " + error.message);
+  } else {
+    alert("Mechanic Registered!");
+  }
 }
 
-function login() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
-    const user = JSON.parse(localStorage.getItem("user"));
+// Register customer
+async function registerCustomer() {
+  let name = document.getElementById("cName").value;
+  let phone = document.getElementById("cPhone").value;
 
-    if (user && user.email === email && user.password === password) {
-        alert("Login successful!");
-        showSection("mechanics");
-        loadMap();
-    } else {
-        alert("Invalid email or password");
-    }
+  let { data, error } = await db.from("customers").insert([{ name, phone }]);
+  if (error) {
+    alert("Error: " + error.message);
+  } else {
+    alert("Customer Registered!");
+  }
 }
 
-function loadMap() {
-    const map = L.map('map').setView([23.6102, 85.2799], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+// Fetch mechanics for customer panel
+async function loadMechanics() {
+  let { data, error } = await db.from("mechanics").select("*");
+  if (error) {
+    alert("Error: " + error.message);
+    return;
+  }
 
-    const mechanics = [
-        { name: "Ravi Mechanic", lat: 23.6102, lng: 85.2799, phone: "9999999999" },
-        { name: "Sohan Auto Works", lat: 23.6150, lng: 85.2805, phone: "8888888888" }
-    ];
+  let list = document.getElementById("mechanicList");
+  list.innerHTML = "";
+  data.forEach(m => {
+    let card = `
+      <div class="card">
+        <h3>${m.name}</h3>
+        <p>Dept: ${m.dept}</p>
+        <p>Phone: ${m.phone}</p>
+        <p>Status: ${m.status}</p>
+        <button onclick="bookMechanic('${m.id}')">Book</button>
+      </div>
+    `;
+    list.innerHTML += card;
+  });
+}
 
-    mechanics.forEach(m => {
-        L.marker([m.lat, m.lng]).addTo(map)
-            .bindPopup(`<b>${m.name}</b><br>📞 ${m.phone}<br><a href="https://wa.me/91${m.phone}">WhatsApp</a>`);
-    });
+// Book mechanic
+async function bookMechanic(id) {
+  alert("Booking mechanic with ID: " + id);
 }
