@@ -406,7 +406,40 @@ $('btnSendM').onclick = async ()=>{
   if(session){ me = session.user; $('btnLogout').style.display='inline-block'; await loadMe(); }
 })();
 </script>
-  <script type="module" src="./supabase.js"></script>
-<script src="https://unpkg.com/@supabase/supabase-js/dist/umd/supabase.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+<script>
+  // Supabase ka client banaye
+  const SUPABASE_URL = "https://fzkjrtudqirpefxsvilc.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6a2pydHVkcWlycGVmeHN2aWxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMjEyNjcsImV4cCI6MjA3MDg5NzI2N30.aSZaNoz5BXESVeYnRAU_cNuOmaN7mOi0nd5-FEN-fZk";
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Signup Function
+  async function signup() {
+    let email = document.getElementById("signupEmail").value;
+    let password = document.getElementById("signupPassword").value;
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      alert("Signup Error: " + error.message);
+    } else {
+      alert("Signup Successful! Please check your email to confirm.");
+    }
+  }
+
+  // Login Function
+  async function login() {
+    let email = document.getElementById("loginEmail").value;
+    let password = document.getElementById("loginPassword").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert("Login Error: " + error.message);
+    } else {
+      alert("Login Successful!");
+      console.log("User:", data.user);
+    }
+  }
+</script>
 </body>
 </html>
