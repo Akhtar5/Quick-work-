@@ -1,27 +1,132 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Quick Work - Login</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quick-Work | Mechanic Finder</title>
+
+  <!-- Theme font (optional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet (no API key needed) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Supabase v2 (UMD) -->
+  <script defer src="https://unpkg.com/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <h1>Quick Work</h1>
+  <header class="brand">
+    <div class="brand-left">8844.70 ◆</div>
+    <div class="brand-right">QUICK-WORK</div>
+  </header>
 
-  <div class="auth-container">
-    <h2>Signup</h2>
-    <input type="email" id="signup-email" placeholder="Email">
-    <input type="password" id="signup-password" placeholder="Password">
-    <button onclick="signup()">Sign Up</button>
+  <!-- AUTH SCREENS -->
+  <main id="screen-auth">
+    <div class="card grid2">
+      <div>
+        <h2>Create account</h2>
+        <input id="regName" placeholder="Full name" />
+        <input id="regPhone" placeholder="Phone (for call/WhatsApp)" />
+        <select id="regRole">
+          <option value="customer">Customer</option>
+          <option value="mechanic">Mechanic</option>
+        </select>
+        <input id="regDept" placeholder="Department / Skill (free text)" />
+        <input id="regEmail" type="email" placeholder="Email" />
+        <input id="regPass" type="password" placeholder="Password" />
+        <button id="btnRegister" class="btn primary">Register</button>
+        <small id="authMsg" class="muted"></small>
+      </div>
 
-    <h2>Login</h2>
-    <input type="email" id="login-email" placeholder="Email">
-    <input type="password" id="login-password" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
+      <div>
+        <h2>Login</h2>
+        <input id="logEmail" type="email" placeholder="Email" />
+        <input id="logPass" type="password" placeholder="Password" />
+        <button id="btnLogin" class="btn primary">Login</button>
+        <button id="btnReset" class="btn ghost">Forgot Password?</button>
+      </div>
+    </div>
+  </main>
 
-  <!-- Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script type="module" src="supabase.js"></script>
+  <!-- DASHBOARD (common topbar) -->
+  <nav id="topbar" class="topbar" style="display:none">
+    <span id="helloUser">Welcome</span>
+    <div class="spacer"></div>
+    <button id="btnHome" class="btn ghost">Home</button>
+    <button id="btnLogout" class="btn ghost">Logout</button>
+  </nav>
+
+  <!-- MECHANIC PANEL -->
+  <section id="panel-mech" style="display:none">
+    <div class="grid2">
+      <div class="card">
+        <h2>My Profile</h2>
+        <div id="mechProfile" class="profile-card"></div>
+        <div class="row">
+          <label class="switch">
+            <input type="checkbox" id="toggleOnline">
+            <span class="slider"></span>
+          </label>
+          <span>&nbsp;Online</span>
+        </div>
+        <button id="btnUpdateLoc" class="btn secondary">Update My Location</button>
+      </div>
+
+      <div class="card">
+        <h2>My Map</h2>
+        <div id="mechMap" class="map"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Incoming Bookings (Realtime)</h2>
+      <ul id="mechBookings" class="list"></ul>
+    </div>
+  </section>
+
+  <!-- CUSTOMER PANEL -->
+  <section id="panel-cust" style="display:none">
+    <div class="grid2">
+      <div class="card">
+        <h2>Find Mechanics</h2>
+        <div class="row">
+          <input id="filterDept" placeholder="Filter by department/skill…" />
+          <button id="btnRefresh" class="btn secondary">Refresh</button>
+          <button id="btnShareLoc" class="btn ghost">Share my location</button>
+        </div>
+        <small id="custLocStatus" class="muted"></small>
+        <ul id="mechList" class="list"></ul>
+      </div>
+
+      <div class="card">
+        <h2>My Bookings (Realtime)</h2>
+        <ul id="myBookings" class="list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rating modal -->
+  <dialog id="rateDlg">
+    <form method="dialog" class="card">
+      <h3>Rate mechanic</h3>
+      <select id="rateStars">
+        <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+      </select>
+      <input id="rateComment" placeholder="Comment (optional)" />
+      <menu>
+        <button value="cancel" class="btn ghost">Cancel</button>
+        <button id="btnSubmitRating" value="ok" class="btn primary">Submit</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <!-- App JS -->
+  <script src="./app.js" defer></script>
 </body>
 </html>
