@@ -6,6 +6,79 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Quick-Work | Mechanic Finder</title>
 
+  <!-- ✅ Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // ✅ Apna Supabase URL & ANON KEY yaha daale
+    const SUPABASE_URL = "https://YOUR-PROJECT-URL.supabase.co";
+    const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+
+    // ✅ Supabase client init
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ✅ Signup
+    async function signUp() {
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        alert("Signup error: " + error.message);
+      } else {
+        alert("Signup successful! Check your email.");
+      }
+    }
+
+    // ✅ Login
+    async function login() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        alert("Login error: " + error.message);
+      } else {
+        alert("Login successful!");
+        window.location.href = "dashboard.html"; // login ke baad dashboard
+      }
+    }
+
+    // ✅ Logout
+    async function logout() {
+      await supabase.auth.signOut();
+      alert("Logged out!");
+    }
+  </script>
+</head>
+<body>
+  <h1>Quick Work</h1>
+
+  <!-- Signup Form -->
+  <div>
+    <h2>Signup</h2>
+    <input id="signup-email" type="email" placeholder="Email" />
+    <input id="signup-password" type="password" placeholder="Password" />
+    <button onclick="signUp()">Sign Up</button>
+  </div>
+  <br>
+
+  <!-- Login Form -->
+  <div>
+    <h2>Login</h2>
+    <input id="login-email" type="email" placeholder="Email" />
+    <input id="login-password" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+  </div>
+  <br>
+
+  <!-- Logout Button -->
+  <button onclick="logout()">Logout</button>
+</body>
+</html>
+
   <!-- Theme font (optional) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
