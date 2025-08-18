@@ -128,5 +128,27 @@
 
   <!-- App JS -->
   <script src="./app.js" defer></script>
+  <script type="module">
+  import { signUp, login, logout } from './supabase.js'
+
+  // Signup button
+  document.getElementById('signup-btn').addEventListener('click', async () => {
+    const email = document.getElementById('signup-email').value
+    const password = document.getElementById('signup-password').value
+    await signUp(email, password)
+  })
+
+  // Login button
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value
+    const password = document.getElementById('login-password').value
+    await login(email, password)
+  })
+
+  // Logout button
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
+    await logout()
+  })
+    </script>
 </body>
 </html>
