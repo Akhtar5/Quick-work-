@@ -36,21 +36,7 @@
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        alert("Login error: " + error.message);
-      } else {
-        alert("Login successful!");
-        window.location.href = "dashboard.html"; // login ke baad dashboard
-      }
-    }
-
-    // ✅ Logout
-    async function logout() {
-      await supabase.auth.signOut();
-      alert("Logged out!");
-    }
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password }
   </script>
 </head>
 <body>
