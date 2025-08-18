@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Quick Work – Auth Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Simple dark theme -->
+  <style>
+    :root{--bg:#06110d;--card:#0c1b16;--line:#123428;--brand:#20f7a2;--text:#e7fff6}
+    *{box-sizing:border-box;font-family:system-ui,Arial}
+    body{margin:0;background:var(--bg);color:var(--text)}
+    .wrap{max-width:560px;margin:32px auto;padding:16px}
+    .card{background:linear-gradient(180deg,var(--card),#0e221b);border:1px solid var(--line);
+          border-radius:16px;padding:16px;margin-bottom:16px}
+    h2{margin:0 0 12px}
+    input,select,button{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid var(--line);background:#04140f;color:var(--text)}
+    button{cursor:pointer;background:var(--brand);color:#05261a;font-weight:700}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .muted{color:#9fcdc0;font-size:13px}
+    pre{white-space:pre-wrap;background:#071812;border:1px solid var(--line);padding:10px;border-radius:10px;max-height:220px;overflow:auto}
+  </style>
+
+  <!-- Supabase UMD (simple for single-file) -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h2>Signup</h2>
+      <div class="row">
+        <input id="name" placeholder="Full name">
+        <input id="phone" placeholder="Phone">
+      </div>
+      <div class="row">
+        <select id="role">
+          <option value="customer">Customer</option>
+          <option value="mechanic">Mechanic</option>
+        </select>
+        <input id="dept" placeholder="Department / Skill">
+      </div>
+      <input id="su-email" type="email" placeholder="Email">
+      <input id="su-pass" type="password" placeholder="Password">
+      <button id="btn-su">Create account</button>
+      <div class="muted">Signup ke baad agar “email confirmation” ON hai to pehle email se confirm karna hoga.</div>
+    </div>
+
+    <div class="card">
+      <h2>Login</h2>
+      <input id="li-email" type="email" placeholder="Email">
+      <input id="li-pass" type="password" placeholder="Password">
+      <button id="btn-li">Login</button>
+      <div class="row">
+        <button id="btn-me">Who am I?</button>
+        <button id="btn-logout">Logout</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Status / Logs</h2>
+      <pre id="log">Ready…</pre>
+    </div>
+  </div>
+
+  <script>
+    // ---- CONFIG (aapka project) ----
+    const SUPABASE_URL  = "https://fzkjrtudqirpefxsvilc.supabase.co";
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6a2pydHVkcWlycGVmeHN2aWxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUzMjEyNjcsImV4cCI6MjA3MDg5NzI2N30.aSZaNoz5BXESVeYnRAU_cNuOmaN7mOi0nd5-FEN-fZk";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const log = (x)=> {
+      const el = document.getElementById('log');
+      el.textContent = (typeof x === 'string') ? x : JSON.stringify(x, null, 2);
+      console.log(x);
+    };
+
+    // helper: profile upsert (role/department/name/phone save)
+    async function upsertProfileFromMeta(user, meta) {
+      const row = {
+        id: user.id,
+        name: meta.name || null,
+        phone: meta.phone || null,
+        role: meta.role || 'customer',
+        department: meta.department || null
+      };
+      const { data, error } = await sb.from('profiles').upsert(row, { onConflict: 'id' }).select().single();
+      if (error) throw error;
+      return data;
+    }
+
+    // SIGNUP
+    document.getElementById('btn-su').onclick = async () => {
+      const email = document.getElementById('su-email').value.trim();
+      const password = document.getElementById('su-pass').value;
+      const meta = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        role: document.getElementById('role').value,
+        department: document.getElementById('dept').value.trim()
+      };
+
+      // email confirm ke baad yahi page pe lautne de:
+      const redirectTo = location.origin + location.pathname; // e.g. https://akhtar5.github.io/Quick-work-/auth-test.html
+
+      const { data, error } = await sb.auth.signUp({
+        email, password,
+        options: { data: meta, emailRedirectTo: redirectTo }
+      });
+      if (error) return log(error.message);
+
+      log({signup: 'OK', user: data.user});
+      // kuch setups me immediate session mil jata; warna confirm ke baad aayega
+      if (data.user) {
+        try { await upsertProfileFromMeta(data.user, meta); } catch (e) { /* ignore if no session yet */ }
+      }
+    };
+
+    // LOGIN
+    document.getElementById('btn-li').onclick = async () => {
+      const email = document.getElementById('li-email').value.trim();
+      const password = document.getElementById('li-pass').value;
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return log(error.message);
+
+      log({login:'OK', session: !!data.session});
+      // profile ensure
+      const { data:U } = await sb.auth.getUser();
+      const meta = U?.user?.user_metadata || {};
+      await upsertProfileFromMeta(U.user, meta).catch(()=>{});
+      // ready to go dashboard
+      // window.location.href = 'dashboard.html';
+    };
+
+    // WHO AM I
+    document.getElementById('btn-me').onclick = async () => {
+      const { data } = await sb.auth.getUser();
+      log(data);
+    };
+
+    // LOGOUT
+    document.getElementById('btn-logout').onclick = async () => {
+      await sb.auth.signOut();
+      log('Signed out');
+    };
+  </script>
+</body>
+</html>
