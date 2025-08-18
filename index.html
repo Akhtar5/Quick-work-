@@ -16,27 +16,6 @@
 
     // ✅ Supabase client init
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // ✅ Signup
-    async function signUp() {
-      const email = document.getElementById("signup-email").value;
-      const password = document.getElementById("signup-password").value;
-
-      const { data, error } = await supabase.auth.signUp({ email, password });
-
-      if (error) {
-        alert("Signup error: " + error.message);
-      } else {
-        alert("Signup successful! Check your email.");
-      }
-    }
-
-    // ✅ Login
-    async function login() {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password }
   </script>
 </head>
 <body>
