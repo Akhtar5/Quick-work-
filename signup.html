@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Signup • Quick Work</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module">
+    import { supabase } from './supabase.js'
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('signup-form')
+      const statusEl = document.getElementById('status')
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        statusEl.textContent = 'Creating account...'
+        const email = form.email.value.trim()
+        const password = form.password.value
+
+        const { data, error } = await supabase.auth.signUp({
+          email, password
+        })
+
+        if (error) {
+          statusEl.textContent = '❌ ' + error.message
+        } else {
+          statusEl.textContent = '✅ Account created! कृपया email verify करें.'
+        }
+      })
+    })
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Create account</h2>
+      <form id="signup-form">
+        <input type="email" name="email" placeholder="Email address" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+      </form>
+      <p class="msg" id="status"></p>
+      <p class="msg">Already have an account? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+</body>
+</html>
