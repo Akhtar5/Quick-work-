@@ -1,0 +1,126 @@
+/* ====== Quick Work • Neo Dark Theme ====== */
+:root{
+  --bg-0:#050908;            /* deepest background */
+  --bg-1:#0A0F0D;            /* main background */
+  --bg-2:#0F1B18;            /* surfaces */
+  --card:#11201C;            /* card surface */
+  --text:#EAFBF6;            /* main text */
+  --muted:#96A6A2;           /* secondary text */
+  --primary:#00FF9C;         /* neon green */
+  --primary-2:#00E08A;       /* darker neon */
+  --accent:#11FFC6;          /* soft mint */
+  --warning:#FFD600;         /* yellow banner */
+  --shadow: 0 12px 40px rgba(0,0,0,.45);
+  --glow: 0 0 12px rgba(0,255,156,.5), 0 0 28px rgba(0,255,156,.25);
+}
+
+/* base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, Poppins, Arial, sans-serif;
+  color:var(--text);
+  background:radial-gradient(1200px 800px at 50% -10%, #0c2a22 0%, var(--bg-1) 60%, var(--bg-0) 100%);
+}
+
+/* optional: matrix digits background */
+.bg-matrix{
+  position:fixed; inset:0; pointer-events:none; opacity:.10;
+  background-image: radial-gradient(transparent 60%, rgba(0,255,156,.18) 61%),
+    url('https://i.ibb.co/4mG0RyS/matrix-dots.png'); /* apni image de do */
+  background-size: 100% 100%, 240px;
+  mix-blend-mode: screen;
+}
+
+/* containers */
+.container{max-width:960px;margin-inline:auto;padding:20px}
+.hero{padding:28px 20px 12px;text-align:center}
+.hero .title{font-size:52px;letter-spacing:4px; font-weight:800; color:var(--primary); text-shadow:var(--glow)}
+.hero .subtitle{letter-spacing:.45em; text-transform:uppercase; color:var(--muted)}
+
+/* cards (glass effect) */
+.card{
+  background: linear-gradient(180deg, rgba(17,32,28,.75), rgba(17,32,28,.55));
+  border:1px solid rgba(0,255,156,.15);
+  backdrop-filter: blur(6px);
+  border-radius:18px;
+  padding:20px;
+  box-shadow: var(--shadow);
+}
+.card + .card{margin-top:16px}
+
+/* stat row */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat{background:var(--card);border:1px solid rgba(0,255,156,.12);border-radius:16px;padding:16px}
+.stat .val{font-size:28px;font-weight:800;color:var(--primary);text-shadow:var(--glow)}
+.stat .label{color:var(--muted);margin-top:6px}
+
+/* big claim box */
+.claim{
+  margin:18px auto;
+  width:min(560px, 92%);
+  background:linear-gradient(180deg,#0f1e1a,#0c1916);
+  border:1px solid rgba(0,255,156,.2);
+  border-radius:22px; padding:18px;
+  box-shadow:var(--shadow);
+}
+.claim .timer{color:var(--muted); text-align:center; margin:6px 0 14px}
+.btn-claim{
+  display:block; margin:0 auto;
+  padding:16px 22px; width:min(400px,88%);
+  border-radius:16px; border:0;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+  color:#003c29; font-weight:900; letter-spacing:.5px;
+  box-shadow:var(--glow);
+  cursor:pointer;
+}
+.btn-claim:active{transform:translateY(1px); filter:saturate(1.1)}
+
+/* generic buttons */
+.btn{
+  padding:12px 16px; border-radius:12px; border:1px solid rgba(0,255,156,.25);
+  background:linear-gradient(180deg,#0f1e1a,#0d1a16); color:var(--text); cursor:pointer;
+}
+.btn-primary{
+  background:linear-gradient(90deg,var(--primary),var(--primary-2));
+  color:#003b2a; border:0; box-shadow:var(--glow); font-weight:800;
+}
+
+/* warning banner */
+.banner{
+  margin:14px 0; text-align:center; font-weight:800; letter-spacing:.06em;
+  color:#1b1200; background:var(--warning);
+  padding:10px 14px; border-radius:12px;
+}
+
+/* bottom nav (mobile) */
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0;
+  background: linear-gradient(180deg, rgba(10,15,13,.9), rgba(5,9,8,.95));
+  border-top:1px solid rgba(0,255,156,.15);
+  display:flex; justify-content:space-around; align-items:center;
+  padding:10px 8px 12px; backdrop-filter: blur(6px);
+}
+.tab{
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  font-size:12px; color:var(--muted); text-decoration:none;
+}
+.tab .icon{
+  width:46px; height:36px; border-radius:14px;
+  display:grid; place-items:center;
+  background:transparent; border:1px solid transparent;
+}
+.tab.active{color:#00291f}
+.tab.active .icon{
+  background:var(--primary); border-color:transparent; box-shadow:var(--glow)
+}
+
+/* inputs (for login/signup) */
+.input{width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(0,255,156,.18);
+  background:#0d1a16; color:var(--text); outline:none}
+.input::placeholder{color:#6e807b}
+.form-row{display:grid; gap:10px}
+
+/* small helper */
+.center{text-align:center}
