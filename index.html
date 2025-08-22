@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quick Work - Login</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js" defer></script>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Quick Work</h1>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    <select id="role">
+      <option value="customer">Customer</option>
+      <option value="mechanic">Mechanic</option>
+    </select>
+    <button onclick="login()">Login</button>
+    <button onclick="signup()">Signup</button>
+  </div>
+</body>
+</html>
