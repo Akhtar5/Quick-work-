@@ -1,52 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Signup - Quick Work</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
 </head>
 <body>
-  <h2>Signup</h2>
-  <input type="email" id="email" placeholder="Email"><br>
-  <input type="password" id="password" placeholder="Password"><br>
+  <h2>Register</h2>
+  <form id="signup-form">
+    <input type="text" id="name" placeholder="Full Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    
+    <select id="role" required>
+      <option value="">-- Select Role --</option>
+      <option value="customer">Customer</option>
+      <option value="mechanic">Mechanic</option>
+    </select><br>
+    
+    <input type="text" id="department" placeholder="Department (if Mechanic)"><br>
+    <input type="text" id="mobile" placeholder="Mobile Number" required><br>
+    
+    <button type="submit">Signup</button>
+  </form>
 
-  <!-- Role select -->
-  <select id="role">
-    <option value="customer">Customer</option>
-    <option value="mechanic">Mechanic</option>
-  </select><br>
-
-  <button onclick="signUp()">Sign Up</button>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="supabase.js"></script>
   <script>
-    async function signUp() {
-      let email = document.getElementById("email").value;
-      let password = document.getElementById("password").value;
-      let role = document.getElementById("role").value;
+    const form = document.getElementById("signup-form");
 
-      // Step 1: Signup user
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+      const department = document.getElementById("department").value;
+      const mobile = document.getElementById("mobile").value;
+
+      // Supabase signup
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password
       });
 
       if (error) {
-        alert(error.message);
+        alert("Error: " + error.message);
         return;
       }
 
-      // Step 2: Insert profile with role
+      // Save extra profile data in 'profiles' table
       const { error: insertError } = await supabase
         .from("profiles")
-        .insert([{ id: data.user.id, email: email, role: role }]);
+        .insert([
+          { id: data.user.id, name, role, department, mobile }
+        ]);
 
       if (insertError) {
-        alert(insertError.message);
+        alert("Profile save error: " + insertError.message);
       } else {
         alert("Signup successful! Please login.");
         window.location.href = "login.html";
       }
-    }
+    });
   </script>
 </body>
 </html>
