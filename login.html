@@ -1,70 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Login • Quick Work</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module">
-    import { supabase } from './supabase.js'
-
-    const DASHBOARD_URL = 'https://akhtar5.github.io/Quick-work-/dashboard.html' // ⚠️ यही URL Supabase Redirects में भी होना चाहिए
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const pwForm = document.getElementById('pw-form')
-      const otpForm = document.getElementById('otp-form')
-      const status1 = document.getElementById('status1')
-      const status2 = document.getElementById('status2')
-
-      // 1) Email + Password Login
-      pwForm.addEventListener('submit', async (e) => {
-        e.preventDefault()
-        status1.textContent = 'Logging in...'
-        const email = pwForm.email.value.trim()
-        const password = pwForm.password.value
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) status1.textContent = '❌ ' + error.message
-        else location.href = 'dashboard.html'
-      })
-
-      // 2) Magic Link / OTP Login (Email link)
-      otpForm.addEventListener('submit', async (e) => {
-        e.preventDefault()
-        status2.textContent = 'Sending magic link...'
-        const email = otpForm.email.value.trim()
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: DASHBOARD_URL }
-        })
-        if (error) status2.textContent = '❌ ' + error.message
-        else status2.textContent = '✅ Link sent! कृपया अपना email check करें.'
-      })
-    })
-  </script>
+  <title>Login - Quick Work</title>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h2>Login (Password)</h2>
-      <form id="pw-form">
-        <input type="email" name="email" placeholder="Email address" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-      <p class="msg" id="status1"></p>
-    </div>
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
 
-    <div class="card" style="margin-top:16px">
-      <h2>Login via Magic Link (OTP)</h2>
-      <form id="otp-form">
-        <input type="email" name="email" placeholder="Email address" required>
-        <button type="submit">Send Magic Link</button>
-      </form>
-      <p class="msg" id="status2"></p>
-    </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script>
+    async function login() {
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
 
-    <div class="card" style="margin-top:16px">
-      <button class="link" onclick="location.href='signup.html'">Need an account? Sign Up</button>
-    </div>
-  </div>
+      // Step 1: Auth login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      let user = data.user;
+
+      // Step 2: Fetch role
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile.role === "mechanic") {
+        window.location.href = "mechanic.html";
+      } else {
+        window.location.href = "customer.html";
+      }
+    }
+  </script>
 </body>
 </html>
