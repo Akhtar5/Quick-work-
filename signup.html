@@ -1,47 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Signup • Quick Work</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module">
-    import { supabase } from './supabase.js'
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('signup-form')
-      const statusEl = document.getElementById('status')
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault()
-        statusEl.textContent = 'Creating account...'
-        const email = form.email.value.trim()
-        const password = form.password.value
-
-        const { data, error } = await supabase.auth.signUp({
-          email, password
-        })
-
-        if (error) {
-          statusEl.textContent = '❌ ' + error.message
-        } else {
-          statusEl.textContent = '✅ Account created! कृपया email verify करें.'
-        }
-      })
-    })
-  </script>
+  <title>Signup - Quick Work</title>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h2>Create account</h2>
-      <form id="signup-form">
-        <input type="email" name="email" placeholder="Email address" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
-      </form>
-      <p class="msg" id="status"></p>
-      <p class="msg">Already have an account? <a href="login.html">Login</a></p>
-    </div>
-  </div>
+  <h2>Signup</h2>
+  <input type="email" id="email" placeholder="Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+
+  <!-- Role select -->
+  <select id="role">
+    <option value="customer">Customer</option>
+    <option value="mechanic">Mechanic</option>
+  </select><br>
+
+  <button onclick="signUp()">Sign Up</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script>
+    async function signUp() {
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
+      let role = document.getElementById("role").value;
+
+      // Step 1: Signup user
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      // Step 2: Insert profile with role
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert([{ id: data.user.id, email: email, role: role }]);
+
+      if (insertError) {
+        alert(insertError.message);
+      } else {
+        alert("Signup successful! Please login.");
+        window.location.href = "login.html";
+      }
+    }
+  </script>
 </body>
 </html>
