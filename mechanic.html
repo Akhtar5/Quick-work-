@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechanic Panel - Quick Work</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Mechanic Panel</h2>
+    
+    <!-- Online/Offline Toggle -->
+    <label class="switch">
+      <input type="checkbox" id="statusToggle">
+      <span class="slider"></span>
+    </label>
+    <p id="statusText">Offline</p>
+
+    <!-- Jobs List -->
+    <h3>Incoming Requests</h3>
+    <ul id="jobsList">
+      <li>No requests yet</li>
+    </ul>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('statusToggle');
+    const statusText = document.getElementById('statusText');
+    toggle.addEventListener('change', () => {
+      if(toggle.checked){
+        statusText.innerText = "Online";
+        statusText.style.color = "green";
+      } else {
+        statusText.innerText = "Offline";
+        statusText.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
