@@ -3,39 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mechanic Panel - Quick Work</title>
+  <title>Quick Work - Mechanic Panel</title>
   <link rel="stylesheet" href="style.css">
+  <script src="mechanic.js" defer></script>
 </head>
 <body>
-  <div class="container">
-    <h2>Mechanic Panel</h2>
-    
-    <!-- Online/Offline Toggle -->
-    <label class="switch">
-      <input type="checkbox" id="statusToggle">
-      <span class="slider"></span>
-    </label>
-    <p id="statusText">Offline</p>
+  <header>
+    <h1>🔧 Quick Work - Mechanic Panel</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
 
-    <!-- Jobs List -->
-    <h3>Incoming Requests</h3>
-    <ul id="jobsList">
-      <li>No requests yet</li>
-    </ul>
-  </div>
+  <!-- Profile Section -->
+  <section class="profile-section">
+    <h2>👨‍🔧 My Profile</h2>
+    <form id="profileForm">
+      <label>Name:</label>
+      <input type="text" id="mechName" placeholder="Enter your name" required>
 
-  <script>
-    const toggle = document.getElementById('statusToggle');
-    const statusText = document.getElementById('statusText');
-    toggle.addEventListener('change', () => {
-      if(toggle.checked){
-        statusText.innerText = "Online";
-        statusText.style.color = "green";
-      } else {
-        statusText.innerText = "Offline";
-        statusText.style.color = "red";
-      }
-    });
-  </script>
+      <label>Mobile:</label>
+      <input type="tel" id="mechMobile" placeholder="Enter mobile number" required>
+
+      <label>Specialization:</label>
+      <select id="mechDept" required>
+        <option value="">Select</option>
+        <option value="Car">Car Repair</option>
+        <option value="Bike">Bike Repair</option>
+        <option value="AC">AC Repair</option>
+        <option value="Plumbing">Plumbing</option>
+        <option value="Electrical">Electrical</option>
+      </select>
+
+      <label>Location:</label>
+      <input type="text" id="mechLocation" placeholder="Enter your location">
+
+      <button type="submit">Save Profile</button>
+    </form>
+  </section>
+
+  <!-- Online/Offline Toggle -->
+  <section class="status-toggle">
+    <h2>Status: <span id="statusText">Offline</span></h2>
+    <button id="toggleStatus">Go Online</button>
+  </section>
+
+  <!-- Customer Requests -->
+  <section class="requests">
+    <h2>📋 Customer Requests</h2>
+    <div class="request-card">
+      <p><strong>Customer:</strong> Rajesh</p>
+      <p><strong>Issue:</strong> Bike Repair</p>
+      <p><strong>Location:</strong> Ranchi</p>
+      <button onclick="callCustomer('9876543210')">📞 Call</button>
+      <button onclick="smsCustomer('9876543210')">💬 SMS</button>
+      <button onclick="openChat('Rajesh')">💻 Chat</button>
+    </div>
+  </section>
+
+  <!-- Chat Window -->
+  <section class="chat-box" id="chatBox" style="display:none;">
+    <h2 id="chatWith">Chat</h2>
+    <div id="chatMessages"></div>
+    <input type="text" id="chatInput" placeholder="Type a message...">
+    <button id="sendChat">Send</button>
+    <button id="closeChat">Close Chat</button>
+  </section>
 </body>
 </html>
