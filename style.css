@@ -1,0 +1,111 @@
+/* === Input Fields Style === */
+.input-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(15, 157, 88, 0.4);
+    border-radius: 8px;
+    color: #0f9d58;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(15, 157, 88, 0.1);
+}
+
+.input-field:focus {
+    border-color: #0f9d58;
+    box-shadow: 0 0 20px rgba(15, 157, 88, 0.3);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #0f9d58;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* === Button Style (Improved) === */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #0f9d58, #0c7e43);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(15, 157, 88, 0.5);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(15, 157, 88, 0.7);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* === Dropdown Select === */
+.select-box {
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(15, 157, 88, 0.4);
+    border-radius: 8px;
+    color: #0f9d58;
+    font-size: 1rem;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%230f9d58%22%20d%3D%22M7.41%208.59L12%2013.17l4.59-4.58L18%2010l-6%206-6-6z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.select-box:focus {
+    border-color: #0f9d58;
+    box-shadow: 0 0 20px rgba(15, 157, 88, 0.3);
+}
+
+/* === Text Link Style === */
+.link {
+    color: #0f9d58;
+    text-decoration: underline;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.link:hover {
+    color: #0c7e43;
+    text-decoration: none;
+}
