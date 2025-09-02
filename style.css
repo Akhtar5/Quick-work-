@@ -44,3 +44,9 @@
 .toggle input:checked + .slider:before {
   transform: translateX(26px);
 }
+body {
+  background-color: lightblue;
+}
+h1 {
+  color: red;
+}
