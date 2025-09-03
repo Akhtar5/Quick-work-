@@ -1,111 +1,110 @@
-/* === Input Fields Style === */
-.input-group {
-    margin-bottom: 15px;
-    position: relative;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: black;
+  color: #00ffcc;
+  text-align: center;
 }
-
-.input-field {
-    width: 100%;
-    padding: 12px 15px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(15, 157, 88, 0.4);
-    border-radius: 8px;
-    color: #0f9d58;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(15, 157, 88, 0.1);
+h1 {
+  color: #00ffcc;
+  margin-top: 20px;
 }
-
-.input-field:focus {
-    border-color: #0f9d58;
-    box-shadow: 0 0 20px rgba(15, 157, 88, 0.3);
-    background: rgba(0, 0, 0, 0.7);
+.form-container {
+  margin: 20px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #00ffcc;
 }
-
-.input-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #0f9d58;
-    font-size: 0.9rem;
-    opacity: 0.8;
+.form-container input,
+.form-container select,
+.form-container button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #00ffcc;
+  background: black;
+  color: #00ffcc;
 }
-
-/* === Button Style (Improved) === */
-.btn {
-    display: inline-block;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #0f9d58, #0c7e43);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 0 15px rgba(15, 157, 88, 0.5);
+.form-container button {
+  background: transparent;
+  cursor: pointer;
+  font-weight: bold;
 }
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 25px rgba(15, 157, 88, 0.7);
+.form-container button:hover {
+  background: #00ffcc;
+  color: black;
 }
-
-.btn:active {
-    transform: translateY(0);
+.toggle-container {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
-
-.btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: 0.5s;
+.toggle-label {
+  font-size: 14px;
+  font-weight: bold;
 }
-
-.btn:hover::before {
-    left: 100%;
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
 }
-
-/* === Dropdown Select === */
-.select-box {
-    padding: 12px 15px;
-    background: rgba(0, 0, 0, 0.8);
-    border: 1px solid rgba(15, 157, 88, 0.4);
-    border-radius: 8px;
-    color: #0f9d58;
-    font-size: 1rem;
-    outline: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22%230f9d58%22%20d%3D%22M7.41%208.59L12%2013.17l4.59-4.58L18%2010l-6%206-6-6z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-    transition: all 0.3s ease;
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
-
-.select-box:focus {
-    border-color: #0f9d58;
-    box-shadow: 0 0 20px rgba(15, 157, 88, 0.3);
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: red;
+  transition: .4s;
+  border-radius: 25px;
 }
-
-/* === Text Link Style === */
-.link {
-    color: #0f9d58;
-    text-decoration: underline;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 3.5px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
 }
-
-.link:hover {
-    color: #0c7e43;
-    text-decoration: none;
+input:checked + .slider {
+  background-color: #00ff00;
+}
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+.navbar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: black;
+  border-top: 1px solid #00ffcc;
+  padding: 10px 0;
+}
+.navbar a {
+  color: #00ffcc;
+  text-decoration: none;
+  font-weight: bold;
+}
+.navbar a:hover {
+  text-decoration: underline;
 }
