@@ -7,41 +7,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Quick Work</h1>
-    <div class="auth-box">
-      <!-- Login Form -->
-      <div id="login-box">
-        <h2>Login</h2>
-        <input type="email" id="login-email" placeholder="Email">
-        <input type="password" id="login-password" placeholder="Password">
-        <button onclick="loginUser()">Login</button>
-        <p>Don’t have an account? <a href="#" onclick="showSignup()">Signup</a></p>
-      </div>
-
-      <!-- Signup Form -->
-      <div id="signup-box" style="display:none;">
-        <h2>Signup</h2>
-        <input type="text" id="signup-name" placeholder="Full Name">
-        <input type="email" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <select id="signup-role">
-          <option value="customer">Customer</option>
-          <option value="mechanic">Mechanic</option>
-        </select>
-        <button onclick="signupUser()">Signup</button>
-        <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-      </div>
-    </div>
+  <h1>Quick Work</h1>
+  <div class="form-container">
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="login()">Login</button>
   </div>
-  
-  <div id="map" style="height:400px; width:100%; margin-top:20px;"></div>
-  <script src="auth.js"></script>
-  <script src="map.js"></script>
+
+  <div class="navbar">
+    <a href="index.html">Home</a>
+    <a href="customer.html">Customer</a>
+    <a href="mechanic.html">Mechanic</a>
+  </div>
+
   <script src="supabase.js"></script>
-  <script src="machenic.js"></script>
-  <script src="customer.js"></script>
-  <a href="machenic.html">Mechanic Page</a>
-<a href="customer.html">Customer Page</a>
+  <script src="auth.js"></script>
 </body>
 </html>
