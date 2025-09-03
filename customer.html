@@ -1,72 +1,37 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Work - Customer Panel</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Quick Work – Customer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>🚗 Quick Work - Customer Panel</h1>
+  <header class="topbar">
+    <h1>👤 Customer Panel</h1>
+    <button class="btn small" id="btnLogout">Logout</button>
   </header>
 
-  <section id="mechanic-list">
-    <h2>Available Mechanics</h2>
+  <main class="container">
+    <section class="card">
+      <h2>Find Mechanics</h2>
+      <div id="mechanicList" class="flex-wrap"></div>
+    </section>
 
-    <!-- Mechanic Card -->
-    <div class="mechanic-card">
-      <h3>Rahul Kumar</h3>
-      <p>Location: Ranchi</p>
-      <p>Status: <span class="online">Online</span></p>
-      <button onclick="callMechanic('9876543210')">📞 Call</button>
-      <button onclick="smsMechanic('9876543210')">💬 SMS</button>
-      <button onclick="openChat('Rahul Kumar')">💻 Chat</button>
-    </div>
+    <section class="card">
+      <h2>My Bookings</h2>
+      <div id="customerBookings" class="flex-wrap"></div>
+    </section>
+  </main>
 
-    <div class="mechanic-card">
-      <h3>Amit Singh</h3>
-      <p>Location: Patna</p>
-      <p>Status: <span class="offline">Offline</span></p>
-      <button onclick="callMechanic('9123456780')">📞 Call</button>
-      <button onclick="smsMechanic('9123456780')">💬 SMS</button>
-      <button onclick="openChat('Amit Singh')">💻 Chat</button>
-    </div>
-  </section>
+  <footer class="navbar">
+    <a href="index.html">Home</a>
+    <a href="customer.html" class="active">Customer</a>
+    <a href="mechanic.html">Mechanic</a>
+  </footer>
 
-  <!-- Chat Box -->
-  <div id="chat-box" class="hidden">
-    <h3 id="chat-with"></h3>
-    <div id="messages"></div>
-    <input type="text" id="msgInput" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
-    <button onclick="closeChat()">Close</button>
-  </div>
-
-  <script>
-    function callMechanic(number) {
-      window.location.href = `tel:${number}`;
-    }
-    function smsMechanic(number) {
-      window.location.href = `sms:${number}`;
-    }
-    function openChat(name) {
-      document.getElementById("chat-box").classList.remove("hidden");
-      document.getElementById("chat-with").innerText = "Chat with " + name;
-    }
-    function closeChat() {
-      document.getElementById("chat-box").classList.add("hidden");
-      document.getElementById("messages").innerHTML = "";
-    }
-    function sendMessage() {
-      let input = document.getElementById("msgInput");
-      if (input.value.trim() !== "") {
-        let msg = document.createElement("p");
-        msg.innerText = "You: " + input.value;
-        document.getElementById("messages").appendChild(msg);
-        input.value = "";
-      }
-    }
-  </script>
+  <script type="module" src="supabase.js"></script>
+  <script type="module" src="customer.js"></script>
 </body>
 </html>
