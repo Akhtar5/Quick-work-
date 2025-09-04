@@ -1,56 +1,78 @@
-function showSignup() {
-  document.getElementById("login-box").style.display = "none";
-  document.getElementById("signup-box").style.display = "block";
-}
+import { supabase, toast } from "./supabase.js";
 
-function showLogin() {
-  document.getElementById("signup-box").style.display = "none";
-  document.getElementById("login-box").style.display = "block";
-}
+const signupBox = document.getElementById("signupBox");
+const loginBox  = document.getElementById("loginBox");
+const goLogin   = document.getElementById("goLogin");
+const goSignup  = document.getElementById("goSignup");
 
-function signupUser() {
-  let name = document.getElementById("signup-name").value;
-  let email = document.getElementById("signup-email").value;
-  let password = document.getElementById("signup-password").value;
-  let role = document.getElementById("signup-role").value;
+if (goLogin)  goLogin.onclick  = (e)=>{ e.preventDefault(); signupBox.classList.add("hidden"); loginBox.classList.remove("hidden"); };
+if (goSignup) goSignup.onclick = (e)=>{ e.preventDefault(); loginBox.classList.add("hidden"); signupBox.classList.remove("hidden"); };
 
-  if (!name || !email || !password) {
-    alert("Please fill all fields");
+const btnSignup = document.getElementById("btnSignup");
+const btnLogin  = document.getElementById("btnLogin");
+
+if (btnSignup) btnSignup.addEventListener("click", doSignup);
+if (btnLogin)  btnLogin.addEventListener("click", doLogin);
+
+// Redirect if already logged in
+(async function restore(){
+  const { data } = await supabase.auth.getSession();
+  const user = data.session?.user;
+  if (!user) return;
+  const { data: prof } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  if (prof?.role === "mechanic") window.location.href = "mechanic.html";
+  else if (prof?.role === "customer") window.location.href = "customer.html";
+})();
+
+async function doSignup(){
+  const name  = document.getElementById("su_name").value.trim();
+  const email = document.getElementById("su_email").value.trim();
+  const pass  = document.getElementById("su_pass").value;
+  const role  = document.getElementById("su_role").value;
+  const dept  = document.getElementById("su_department").value.trim();
+  const mobile= document.getElementById("su_mobile").value.trim();
+
+  if(!name || !email || !pass || !role || !mobile){
+    toast("Please fill all required fields.");
+    return;
+  }
+  if(role==="mechanic" && !dept){
+    toast("Department is required for Mechanics.");
     return;
   }
 
-  // 🔹 LocalStorage based user register (later Supabase se connect karenge)
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  if (users.find(u => u.email === email)) {
-    alert("Email already exists");
-    return;
-  }
+  const { data, error } = await supabase.auth.signUp({ email, password: pass });
+  if (error) { toast(error.message); return; }
+  const uid = data.user?.id;
+  if (!uid) { toast("Signup failed. Try again."); return; }
 
-  users.push({ name, email, password, role });
-  localStorage.setItem("users", JSON.stringify(users));
+  // Upsert profile (make sure your 'profiles' has id uuid PK referencing auth.users)
+  const { error: perr } = await supabase.from("profiles").upsert({
+    id: uid,
+    name, role,
+    department: dept || null,
+    mobile,
+    status: "offline",
+    email
+  }, { onConflict: "id" });
 
-  alert("Signup successful! Please login.");
-  showLogin();
+  if (perr) { toast("Profile save error: " + perr.message); return; }
+
+  toast("Signup successful! Please login.");
+  loginBox.classList.remove("hidden");
+  signupBox.classList.add("hidden");
 }
 
-function loginUser() {
-  let email = document.getElementById("login-email").value;
-  let password = document.getElementById("login-password").value;
+async function doLogin(){
+  const email = document.getElementById("li_email").value.trim();
+  const pass  = document.getElementById("li_pass").value;
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
-  let user = users.find(u => u.email === email && u.password === password);
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error) { toast(error.message); return; }
 
-  if (!user) {
-    alert("Invalid email or password");
-    return;
-  }
+  const user = data.user;
+  const { data: prof } = await supabase.from("profiles").select("*").eq("id", user.id).single();
 
-  localStorage.setItem("loggedInUser", JSON.stringify(user));
-
-  // 🔹 Redirect based on role
-  if (user.role === "customer") {
-    window.location.href = "customer.html";
-  } else {
-    window.location.href = "mechanic.html";
-  }
+  if (prof?.role === "mechanic") window.location.href = "mechanic.html";
+  else window.location.href = "customer.html";
 }
