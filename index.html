@@ -1,27 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Work - Login / Signup</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Quick Work – Login / Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Main styles -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Quick Work</h1>
-  <div class="form-container">
-    <input type="email" id="email" placeholder="Enter Email">
-    <input type="password" id="password" placeholder="Enter Password">
-    <button onclick="signUp()">Sign Up</button>
-    <button onclick="login()">Login</button>
-  </div>
+  <header class="topbar">
+    <h1>⚡ Quick Work</h1>
+  </header>
 
-  <div class="navbar">
+  <main class="container">
+
+    <!-- Sign Up -->
+    <section class="card" id="signupBox">
+      <h2>Create Account</h2>
+      <div class="grid-2">
+        <div>
+          <input id="su_name" placeholder="Full Name" />
+          <input id="su_email" type="email" placeholder="Email" />
+          <input id="su_pass" type="password" placeholder="Password" />
+        </div>
+        <div>
+          <select id="su_role">
+            <option value="">-- Select Role --</option>
+            <option value="customer">Customer</option>
+            <option value="mechanic">Mechanic</option>
+          </select>
+          <input id="su_department" placeholder="Department (for Mechanic)" />
+          <input id="su_mobile" placeholder="Mobile Number" />
+        </div>
+      </div>
+      <button class="btn" id="btnSignup">Signup</button>
+      <p class="muted">Already have an account? <a href="#" id="goLogin">Login here</a></p>
+    </section>
+
+    <!-- Login -->
+    <section class="card hidden" id="loginBox">
+      <h2>Welcome Back</h2>
+      <div class="grid-2">
+        <div>
+          <input id="li_email" type="email" placeholder="Email" />
+        </div>
+        <div>
+          <input id="li_pass" type="password" placeholder="Password" />
+        </div>
+      </div>
+      <button class="btn" id="btnLogin">Login</button>
+      <p class="muted">No account? <a href="#" id="goSignup">Create one</a></p>
+    </section>
+
+  </main>
+
+  <footer class="navbar">
     <a href="index.html">Home</a>
     <a href="customer.html">Customer</a>
     <a href="mechanic.html">Mechanic</a>
-  </div>
+  </footer>
 
-  <script src="supabase.js"></script>
-  <script src="auth.js"></script>
+  <!-- Scripts -->
+  <script type="module" src="supabase.js"></script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>
