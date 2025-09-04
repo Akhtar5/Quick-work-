@@ -1,35 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick Work - Mechanic</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Quick Work – Mechanic</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Mechanic Dashboard</h1>
+  <header class="topbar">
+    <h1>🛠 Mechanic Panel</h1>
+    <button class="btn small" id="btnLogout">Logout</button>
+  </header>
 
-  <div class="toggle-container">
-    <span class="toggle-label">Offline</span>
-    <label class="toggle-switch">
-      <input type="checkbox" id="statusToggle">
-      <span class="slider"></span>
-    </label>
-    <span class="toggle-label">Online</span>
-  </div>
+  <main class="container">
 
-  <div class="form-container">
-    <input type="text" placeholder="Your Service (e.g., Car Repair)">
-    <button onclick="updateStatus()">Update Status</button>
-  </div>
+    <section class="card">
+      <h2>My Status</h2>
+      <div class="toggle-container">
+        <span class="toggle-label">Offline</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="statusToggle">
+          <span class="slider"></span>
+        </label>
+        <span class="toggle-label">Online</span>
+      </div>
+      <p class="muted">Current status: <b id="statusText">offline</b></p>
+    </section>
 
-  <div class="navbar">
+    <section class="card">
+      <h2>Booking Requests</h2>
+      <div id="mechanicRequests" class="flex-wrap"></div>
+    </section>
+
+    <section class="card">
+      <h2>Map (placeholder)</h2>
+      <div id="map" class="map-box">Map will appear here</div>
+    </section>
+
+  </main>
+
+  <footer class="navbar">
     <a href="index.html">Home</a>
     <a href="customer.html">Customer</a>
-    <a href="mechanic.html">Mechanic</a>
-  </div>
+    <a href="mechanic.html" class="active">Mechanic</a>
+  </footer>
 
-  <script src="supabase.js"></script>
-  <script src="mechanic.js"></script>
+  <script type="module" src="supabase.js"></script>
+  <script type="module" src="mechanic.js"></script>
+  <script type="module" src="map.js"></script>
 </body>
 </html>
