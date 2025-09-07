@@ -1,52 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Quick Work – Mechanic</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechanic Panel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1>🛠 Mechanic Panel</h1>
-    <button class="btn small" id="btnLogout">Logout</button>
-  </header>
+  <h1>Mechanic Dashboard</h1>
 
-  <main class="container">
+  <!-- Mechanic Profile -->
+  <div id="profile"></div>
 
-    <section class="card">
-      <h2>My Status</h2>
-      <div class="toggle-container">
-        <span class="toggle-label">Offline</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="statusToggle">
-          <span class="slider"></span>
-        </label>
-        <span class="toggle-label">Online</span>
-      </div>
-      <p class="muted">Current status: <b id="statusText">offline</b></p>
-    </section>
+  <!-- Online / Offline Toggle -->
+  <div class="toggle-container">
+    <span class="toggle-label">Offline</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="statusToggle">
+      <span class="slider"></span>
+    </label>
+    <span class="toggle-label">Online</span>
+  </div>
 
-    <section class="card">
-      <h2>Booking Requests</h2>
-      <div id="mechanicRequests" class="flex-wrap"></div>
-    </section>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="mechanic.html">Home</a>
+    <a href="messages.html">Messages</a>
+    <a href="bookings.html">Bookings</a>
+    <a href="index.html">Logout</a>
+  </div>
 
-    <section class="card">
-      <h2>Map (placeholder)</h2>
-      <div id="map" class="map-box">Map will appear here</div>
-    </section>
-
-  </main>
-
-  <footer class="navbar">
-    <a href="index.html">Home</a>
-    <a href="customer.html">Customer</a>
-    <a href="mechanic.html" class="active">Mechanic</a>
-  </footer>
-
+  <!-- ✅ Scripts -->
   <script type="module" src="supabase.js"></script>
   <script type="module" src="mechanic.js"></script>
-  <script type="module" src="map.js"></script>
 </body>
 </html>
